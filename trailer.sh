@@ -33,7 +33,7 @@ YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=1a7373
 #YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=1a7373301961d03f97f853a876dd1212" | cut -d ':' -f7 | cut -d '"' -f2)
 
 # download trailer from youtube based on video resolution (requires youtube-dl and permission to run it)
-youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o $radarr_movie_path/movie-trailer.mp4 --restrict-filenames
+youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o $radarr_movie_path/movie-trailer --restrict-filenames
 
 # as a final note the script doesn't bother to check for existing trailers. ¯\_(ツ)_/¯
 # as a final final note you probably shouldn't leave the "shruggie" in the previous line, it could break something
