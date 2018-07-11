@@ -6,7 +6,7 @@
 # script don't give a damn if there is no trailer on tmdb, it will run all the way through like a wrecking ball of failure, hell sometimes it just downloads the trailer for 1993's Judgment Night just for kicks (not kidding)
 # script will try to write to movie-trailer.mp4 unless youtube-dl wants to do something else... about half the time it merges to an mkv
 
-# wait a bit to be safe
+# wait a bit to be safe (who knows if radarr is done or not)
 sleep 60
 
 # gather and process video resolution (requires ffmpeg and permission to run it)
