@@ -24,13 +24,11 @@ fi
 # set imdbid for film to static variable (because why the hell not)
 TT=$radarr_movie_imdbid
 
-# pull tmdb id for film based on imdbid (yes this does indeed require two api calls, and on rare occasions pulls the tmdb id of 6, probably due to the way I'm parsing the data in combination with old json formatting. happens with older films but seemingly not newer ones, or maybe it's random? idk. fixing this soon with jq instead of cut because sanity and stuff.)
+# pull tmdb id for film based on imdbid (yes this does indeed require two api calls, but should no longer result in Judgement Night)
 TMDB=$(curl -s "http://api.themoviedb.org/3/find/$TT?api_key=1a7373301961d03f97f853a876dd1212&language=en-US&external_source=imdb_id" | tac | tac | jq -r '.' | grep "id\"" | sed 's/[^0-9]*//g')
-#TMDB=$(curl -s "http://api.themoviedb.org/3/find/$TT?api_key=1a7373301961d03f97f853a876dd1212&language=en-US&external_source=imdb_id" | cut -d ':' -f6 | cut -d ',' -f1)
 
 # pull trailer video id from tmdb based on tmdb id (imperfect, may not grab anything or may grab an video that is not trailer)
 YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=1a7373301961d03f97f853a876dd1212" | tac | tac | jq -r '.' | grep key | cut -d \" -f4)
-#YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=1a7373301961d03f97f853a876dd1212" | cut -d ':' -f7 | cut -d '"' -f2)
 
 # download trailer from youtube based on video resolution (requires youtube-dl and permission to run it)
 youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o $radarr_movie_path/movie-trailer --restrict-filenames
