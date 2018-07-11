@@ -4,7 +4,7 @@
 # script is imperfect and quite assumptive that everything is where it should be
 # script expects you are using radarr to move your videos to the final path and that this process has completed
 # script don't give a damn if there is no trailer on tmdb, it will run all the way through like a wrecking ball of failure, hell sometimes it just downloads the trailer for 1993's Judgment Night just for kicks (not kidding)
-# script will try to write to movie-trailer.mp4 unless youtube-dl wants to do something else... about half the time it merges to an mkv
+# script will try to write to movie-trailer.mkv unless youtube-dl wants to do something else...
 
 # wait a bit to be safe (who knows if radarr is done or not)
 sleep 60
@@ -31,7 +31,8 @@ TMDB=$(curl -s "http://api.themoviedb.org/3/find/$TT?api_key=1a7373301961d03f97f
 YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=1a7373301961d03f97f853a876dd1212" | tac | tac | jq -r '.' | grep key | cut -d \" -f4)
 
 # download trailer from youtube based on video resolution (requires youtube-dl and permission to run it)
-youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o $radarr_movie_path/movie-trailer --restrict-filenames
+youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o movie-trailer --restrict-filenames --merge-output-format mkv
+# youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o $radarr_movie_path/movie-trailer --restrict-filenames
 
 # as a final note the script doesn't bother to check for existing trailers. ¯\_(ツ)_/¯
 # as a final final note you probably shouldn't leave the "shruggie" in the previous line, it could break something
