@@ -34,11 +34,11 @@ fi
 TT=$radarr_movie_imdbid
 
 # pull tmdb id for film based on imdbid (yes this does indeed require two api calls. should no longer result in Judgement Night, unless it does)
-TMDB=$(curl -s "http://api.themoviedb.org/3/find/$TT?api_key=1a7373301961d03f97f853a876dd1212&language=en-US&external_source=imdb_id" | tac | tac | jq -r '.' | grep "id\"" | sed 's/[^0-9]*//g')
+TMDB=$(curl -s "http://api.themoviedb.org/3/find/$TT?api_key=$KEY1&language=en-US&external_source=imdb_id" | tac | tac | jq -r '.' | grep "id\"" | sed 's/[^0-9]*//g')
 
 # pull trailer video id from tmdb based on tmdb id (imperfect, may not grab anything or may grab an video that is not trailer)
 
-YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=1a7373301961d03f97f853a876dd1212" | tac | tac | jq -r '.' | grep key | cut -d \" -f4)
+YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1" | tac | tac | jq -r '.' | grep key | cut -d \" -f4)
 
 # download trailer from youtube based on video resolution (requires youtube-dl and permission to run it)
 # occasionally this step throws an error:
