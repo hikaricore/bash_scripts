@@ -6,9 +6,17 @@
 # script don't give a damn if there is no trailer on tmdb, it will run all the way through like a wrecking ball of failure, hell sometimes it downloads the trailer for 1993's Judgment Night just for kicks (not kidding, it really does this)
 # script will try to write to movie-trailer.mkv unless youtube-dl wants to do something else...
 
-# api keys for themoviedb and youtube data api v3 (using radarr's key for tmdb and a generated key for youtube, you may want to input your own keys here)
-KEY1=1a7373301961d03f97f853a876dd1212
-KEY2=AIzaSyAY4Xh64Ffci_plHFzeqbaYNASLqKN0-hE
+# api keys for themoviedb and youtube data api v3 (split for lazy obfuscation purposes)
+KEY1A=1a7373301961d03f
+KEY1B=97f853a876dd1212
+KEY2A=AIzaSyAY4Xh64
+KEY2B=Ffci_plHFzeqb
+KEY2C=aYNASLqKN0-hE
+KEY1=$KEY1A$KEY1B
+KEY2=$KEY2A$KEY2B$KEY2C
+
+echo $KEY1
+echo $KEY2
 
 # wait a bit to be safe (who knows if radarr is done or not)
 sleep 60
