@@ -6,6 +6,10 @@
 # script don't give a damn if there is no trailer on tmdb, it will run all the way through like a wrecking ball of failure, hell sometimes it downloads the trailer for 1993's Judgment Night just for kicks (not kidding, it really does this)
 # script will try to write to movie-trailer.mkv unless youtube-dl wants to do something else...
 
+# api keys for themoviedb and youtube data api v3 (using radarr's key for tmdb and a generated key for youtube, you may want to input your own keys here)
+KEY1=1a7373301961d03f97f853a876dd1212
+KEY2=AIzaSyAY4Xh64Ffci_plHFzeqbaYNASLqKN0-hE
+
 # wait a bit to be safe (who knows if radarr is done or not)
 sleep 60
 
@@ -28,15 +32,33 @@ TT=$radarr_movie_imdbid
 TMDB=$(curl -s "http://api.themoviedb.org/3/find/$TT?api_key=1a7373301961d03f97f853a876dd1212&language=en-US&external_source=imdb_id" | tac | tac | jq -r '.' | grep "id\"" | sed 's/[^0-9]*//g')
 
 # pull trailer video id from tmdb based on tmdb id (imperfect, may not grab anything or may grab an video that is not trailer)
+
 YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=1a7373301961d03f97f853a876dd1212" | tac | tac | jq -r '.' | grep key | cut -d \" -f4)
 
 # download trailer from youtube based on video resolution (requires youtube-dl and permission to run it)
-# Occasionally this step throws an error:
+# occasionally this step throws an error:
 # "WARNING: Could not send HEAD request to https://www.youtube.com/watch?v=XXXXXXXXXXX
 # XXXXXXXXXXX: <urlopen error no host given>
 # ERROR: Unable to download webpage: <urlopen error no host given> (caused by URLError('no host given',))"
-# I have no idea why this happens, or how to fix it.  XD
-youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o $radarr_movie_path/movie-trailer --restrict-filenames --merge-output-format mkv
+# no idea why this happens, or how to fix it.  XD
+# now with 100% more validity checking!  that will "probably" work and not break the process?
+
+SANITY=$(curl -s "https://www.googleapis.com/youtube/v3/videos?part=id&id=$YOUTUBE&key=$KEY2" | tac | tac | jq -r '.' | grep totalResults | sed 's/[^0-9]*//g')
+
+if [[ $SANITY -eq 1 ]]
+  then
+    #echo "Video exists."
+    youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o $radarr_movie_path/movie-trailer --restrict-filenames --merge-output-format mkv
+  else
+  if [[ $SANITY -eq 0 ]]
+  then
+    echo "Video does not exist."
+  else
+    echo "WTF. Something is very wrong."
+  fi
+fi
+
+#youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o $radarr_movie_path/movie-trailer --restrict-filenames --merge-output-format mkv
 
 # as a final note the script doesn't bother to check for existing trailers. ¯\_(ツ)_/¯
 # as a final final note you probably shouldn't leave the "shruggie" in the previous line, it could break something
