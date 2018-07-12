@@ -7,8 +7,8 @@
 # script will try to write to movie-trailer.mkv unless youtube-dl wants to do something else...
 
 # api keys for themoviedb and youtube data api v3 (split for lazy obfuscation purposes)
-K1A=1a7373301961d03f
-K1B=97f853a876dd1212
+K1A=1df2a2659c50fdab
+K1B=77b8d9f8459cf95a
 K2A=AIzaSyCCD8e6A
 K2B=DQ4lOQcV77ErX
 K2C=yK3_d4unJwcYE
