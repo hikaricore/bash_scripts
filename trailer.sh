@@ -3,7 +3,7 @@
 # script requires ffmpeg and youtube-dl + permission to run them
 # script is imperfect and quite assumptive that everything is where it should be
 # script expects you are using radarr to move your videos to the final path and that this process has completed
-# script don't give a damn if there is no trailer on tmdb, it will run all the way through like a wrecking ball of failure, hell sometimes it just downloads the trailer for 1993's Judgment Night just for kicks (not kidding)
+# script don't give a damn if there is no trailer on tmdb, it will run all the way through like a wrecking ball of failure, hell sometimes it downloads the trailer for 1993's Judgment Night just for kicks (not kidding, it really does this)
 # script will try to write to movie-trailer.mkv unless youtube-dl wants to do something else...
 
 # wait a bit to be safe (who knows if radarr is done or not)
@@ -24,7 +24,7 @@ fi
 # set imdbid for film to static variable (because why the hell not)
 TT=$radarr_movie_imdbid
 
-# pull tmdb id for film based on imdbid (yes this does indeed require two api calls, but should no longer result in Judgement Night)
+# pull tmdb id for film based on imdbid (yes this does indeed require two api calls. should no longer result in Judgement Night, unless it does)
 TMDB=$(curl -s "http://api.themoviedb.org/3/find/$TT?api_key=1a7373301961d03f97f853a876dd1212&language=en-US&external_source=imdb_id" | tac | tac | jq -r '.' | grep "id\"" | sed 's/[^0-9]*//g')
 
 # pull trailer video id from tmdb based on tmdb id (imperfect, may not grab anything or may grab an video that is not trailer)
