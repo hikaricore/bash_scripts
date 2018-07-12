@@ -31,6 +31,11 @@ TMDB=$(curl -s "http://api.themoviedb.org/3/find/$TT?api_key=1a7373301961d03f97f
 YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=1a7373301961d03f97f853a876dd1212" | tac | tac | jq -r '.' | grep key | cut -d \" -f4)
 
 # download trailer from youtube based on video resolution (requires youtube-dl and permission to run it)
+# Occasionally this step throws an error:
+# "WARNING: Could not send HEAD request to https://www.youtube.com/watch?v=XXXXXXXXXXX
+# XXXXXXXXXXX: <urlopen error no host given>
+# ERROR: Unable to download webpage: <urlopen error no host given> (caused by URLError('no host given',))"
+# I have no idea why this happens, or how to fix it.  XD
 youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o $radarr_movie_path/movie-trailer --restrict-filenames --merge-output-format mkv
 
 # as a final note the script doesn't bother to check for existing trailers. ¯\_(ツ)_/¯
