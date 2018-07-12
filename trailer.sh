@@ -15,9 +15,6 @@ KEY2C=aYNASLqKN0-hE
 KEY1=$KEY1A$KEY1B
 KEY2=$KEY2A$KEY2B$KEY2C
 
-echo $KEY1
-echo $KEY2
-
 # wait a bit to be safe (who knows if radarr is done or not)
 sleep 60
 
@@ -65,8 +62,6 @@ if [[ $SANITY -eq 1 ]]
     echo "WTF. Something is very wrong."
   fi
 fi
-
-#youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o $radarr_movie_path/movie-trailer --restrict-filenames --merge-output-format mkv
 
 # as a final note the script doesn't bother to check for existing trailers. ¯\_(ツ)_/¯
 # as a final final note you probably shouldn't leave the "shruggie" in the previous line, it could break something
