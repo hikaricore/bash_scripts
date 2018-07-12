@@ -7,13 +7,13 @@
 # script will try to write to movie-trailer.mkv unless youtube-dl wants to do something else...
 
 # api keys for themoviedb and youtube data api v3 (split for lazy obfuscation purposes)
-KEY1A=1a7373301961d03f
-KEY1B=97f853a876dd1212
-KEY2A=AIzaSyAY4Xh64
-KEY2B=Ffci_plHFzeqb
-KEY2C=aYNASLqKN0-hE
-KEY1=$KEY1A$KEY1B
-KEY2=$KEY2A$KEY2B$KEY2C
+K1A=1a7373301961d03f
+K1B=97f853a876dd1212
+K2A=AIzaSyCCD8e6A
+K2B=DQ4lOQcV77ErX
+K2C=yK3_d4unJwcYE
+KEY1=$K1A$K1B
+KEY2=$K2A$K2B$K2C
 
 # wait a bit to be safe (who knows if radarr is done or not)
 sleep 60
