@@ -16,7 +16,7 @@ KEY1=$K1A$K1B
 KEY2=$K2A$K2B$K2C
 
 # check to see if a trailer exists and do stuff if it doesn't 
-if [ ! -f movie-trailer.* ]
+if [ ! -f $radarr_movie_path/movie-trailer.* ]
     then
 
 # wait a bit to be safe (who knows if radarr is done or not)
