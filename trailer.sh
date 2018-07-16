@@ -18,6 +18,7 @@ KEY2=$K2A$K2B$K2C
 # check to see if a trailer exists and do stuff if it doesn't 
 if [ ! -f $radarr_movie_path/movie-trailer.* ]
     then
+        echo "Trailer does not exist. Attempting to grab one."
 
 # wait a bit to be safe (who knows if radarr is done or not)
 sleep 60
