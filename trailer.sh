@@ -68,6 +68,9 @@ if [[ $SANITY -eq 1 ]]
 fi
 
 # this is from earlier when we started checking for a trailer. let's hope nesting if statements doesn't fuck up somehow
+    else
+        TRAILERNAME=$(ls $radarr_movie_path/movie-trailer.*)
+        echo "Trailer exists: $TRAILERNAME"
 fi
 
 # as a final note the script doesn't bother to check for existing trailers. ¯\_(ツ)_/¯
