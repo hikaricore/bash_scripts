@@ -15,6 +15,10 @@ K2C=yK3_d4unJwcYE
 KEY1=$K1A$K1B
 KEY2=$K2A$K2B$K2C
 
+# check to see if a trailer exists and do stuff if it doesn't 
+if [ ! -f movie-trailer.* ]
+    then
+
 # wait a bit to be safe (who knows if radarr is done or not)
 sleep 60
 
@@ -61,6 +65,9 @@ if [[ $SANITY -eq 1 ]]
   else
     echo "WTF. Something is very wrong."
   fi
+fi
+
+# this is from earlier when we started checking for a trailer. let's hope nesting if statements doesn't fuck up somehow
 fi
 
 # as a final note the script doesn't bother to check for existing trailers. ¯\_(ツ)_/¯
