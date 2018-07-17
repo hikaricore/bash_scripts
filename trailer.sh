@@ -42,7 +42,11 @@ TMDB=$(curl -s "http://api.themoviedb.org/3/find/$TT?api_key=$KEY1&language=en-U
 
 # pull trailer video id from tmdb based on tmdb id (imperfect, may not grab anything or may grab an video that is not trailer)
 
-YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1" | tac | tac | jq -r '.' | grep key | cut -d \" -f4)
+# dumb way to do it 1 #YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1" | tac | tac | jq -r '.' | grep key | cut -d \" -f4)
+# dumb way to do it 2 #YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1" |  tac | tac | jq -r '.' | sort -r | grep key | cut -d \" -f4 | head -n 1)
+# never assume just one video in the output. derp.
+YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1&language=en-US" | tac | tac | jq '.results[0]' | grep key | cut -d \" -f4)
+
 
 # download trailer from youtube based on video resolution (requires youtube-dl and permission to run it)
 # occasionally this step throws an error:
