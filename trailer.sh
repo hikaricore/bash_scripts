@@ -20,7 +20,7 @@ if [ ! -f $radarr_movie_path/movie-trailer.* ]
         printf "Trailer does not exist for $radarr_movie_title, attempting to grab one." >&2
 
 # wait a bit to be safe (who knows if radarr is done or not)
-sleep 60
+sleep 20
 
 # gather and process video resolution (requires ffmpeg and permission to run it)
 RES=$(ffmpeg -i $radarr_moviefile_path 2>&1 | grep -oP 'Stream .*, \K[0-9]+x[0-9]+')
@@ -41,9 +41,6 @@ TT=$radarr_movie_imdbid
 TMDB=$(curl -s "http://api.themoviedb.org/3/find/$TT?api_key=$KEY1&language=en-US&external_source=imdb_id" | tac | tac | jq -r '.' | grep "id\"" | sed 's/[^0-9]*//g')
 
 # pull trailer video id from tmdb based on tmdb id (imperfect, may not grab anything or may grab an video that is not trailer)
-
-# dumb way to do it 1 #YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1" | tac | tac | jq -r '.' | grep key | cut -d \" -f4)
-# dumb way to do it 2 #YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1" |  tac | tac | jq -r '.' | sort -r | grep key | cut -d \" -f4 | head -n 1)
 # never assume just one video in the output. derp.
 YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1&language=en-US" | tac | tac | jq '.results[0]' | grep key | cut -d \" -f4)
 
