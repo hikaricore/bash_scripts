@@ -17,7 +17,7 @@ KEY2=$K2A$K2B$K2C
 # check to see if a trailer exists and do stuff if it doesn't (hey look this happens now!)
 if [ ! -f $radarr_movie_path/movie-trailer.* ]
     then
-        printf "Trailer does not exist, attempting to grab one." >&2
+        printf "Trailer does not exist for $radarr_movie_title, attempting to grab one." >&2
 
 # wait a bit to be safe (who knows if radarr is done or not)
 sleep 60
@@ -56,7 +56,7 @@ SANITY=$(curl -s "https://www.googleapis.com/youtube/v3/videos?part=id&id=$YOUTU
 
 if [[ $SANITY -eq 1 ]]
   then
-    printf '\n'"Video exists, attempting to download." >&2
+    printf '\n'"YouTube trailer exists, attempting to download." >&2
     youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o $radarr_movie_path/movie-trailer --restrict-filenames --merge-output-format mkv
     sleep 5
     TRAILERNAME=$(ls $radarr_movie_path/movie-trailer.*)
@@ -64,7 +64,7 @@ if [[ $SANITY -eq 1 ]]
   else
   if [[ $SANITY -eq 0 ]]
   then
-    printf '\n'"Video does not exist." >&2
+    printf '\n'"YouTube trailer does not exist. (End of the line)" >&2
   else
     printf '\n'"WTF, something is very wrong. (You should never see this message..)" >&2
   fi
@@ -73,5 +73,5 @@ fi
 # this is from earlier when we started checking for a trailer. let's hope nesting if statements doesn't fuck up somehow
     else
         TRAILERNAME=$(ls $radarr_movie_path/movie-trailer.*)
-        printf "Trailer exists: $TRAILERNAME" >&2
+        printf "Trailer already exists for $radarr_movie_title: $TRAILERNAME" >&2
 fi
