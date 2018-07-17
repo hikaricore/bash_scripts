@@ -30,6 +30,7 @@ RES=$(ffmpeg -i $radarr_moviefile_path 2>&1 | grep -oP 'Stream .*, \K[0-9]+x[0-9
 RES2=$(echo $RES | cut -d 'x' -f1)
 
 # confirm if video resolution requires an sd 480p or hd 720p trailer (we don't bother with 1080p, so there's no check or variable set for it here)
+
 if [ $RES2 -gt 1000 ]
   then
     RES3=720
