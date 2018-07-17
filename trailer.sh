@@ -17,7 +17,7 @@ KEY2=$K2A$K2B$K2C
 # check to see if a trailer exists and do stuff if it doesn't (hey look this happens now!)
 if [ ! -f $radarr_movie_path/movie-trailer.* ]
     then
-        printf "Trailer does not exist. Attempting to grab one." >&2
+        printf "Trailer does not exist, attempting to grab one." >&2
 
 # wait a bit to be safe (who knows if radarr is done or not)
 sleep 60
@@ -56,17 +56,17 @@ SANITY=$(curl -s "https://www.googleapis.com/youtube/v3/videos?part=id&id=$YOUTU
 
 if [[ $SANITY -eq 1 ]]
   then
-    printf " | Video exists, attempting to download." >&2
+    printf '\n'"Video exists, attempting to download." >&2
     youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o $radarr_movie_path/movie-trailer --restrict-filenames --merge-output-format mkv
     sleep 5
     TRAILERNAME=$(ls $radarr_movie_path/movie-trailer.*)
-    printf " | Trailer downloaded: $TRAILERNAME" >&2
+    printf '\n'"Trailer downloaded: $TRAILERNAME" >&2
   else
   if [[ $SANITY -eq 0 ]]
   then
-    printf " | Video does not exist." >&2
+    printf '\n'"Video does not exist." >&2
   else
-    printf " | WTF. Something is very wrong." >&2
+    printf '\n'"WTF, something is very wrong. (You should never see this message..)" >&2
   fi
 fi
 
