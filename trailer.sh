@@ -3,7 +3,6 @@
 # script requires ffmpeg and youtube-dl + permission to run them
 # script is imperfect and quite assumptive that everything is where it should be
 # script expects you are using radarr to move your videos to the final path and that this process has completed
-# script don't give a damn if there is no trailer on tmdb, it will run all the way through like a wrecking ball of failure, hell sometimes it downloads the trailer for 1993's Judgment Night just for kicks (not kidding, it really does this)
 # script will try to write to movie-trailer.mkv unless youtube-dl wants to do something else...
 
 # api keys for themoviedb and youtube data api v3 (split for lazy obfuscation purposes)
@@ -15,10 +14,10 @@ K2C=yK3_d4unJwcYE
 KEY1=$K1A$K1B
 KEY2=$K2A$K2B$K2C
 
-# check to see if a trailer exists and do stuff if it doesn't 
+# check to see if a trailer exists and do stuff if it doesn't (hey look this happens now!)
 if [ ! -f $radarr_movie_path/movie-trailer.* ]
     then
-        echo "Trailer does not exist. Attempting to grab one."
+        echo "Trailer does not exist. Attempting to grab one." >&2
 
 # wait a bit to be safe (who knows if radarr is done or not)
 sleep 60
@@ -57,22 +56,19 @@ SANITY=$(curl -s "https://www.googleapis.com/youtube/v3/videos?part=id&id=$YOUTU
 
 if [[ $SANITY -eq 1 ]]
   then
-    #echo "Video exists."
+    #echo "Video exists." >&2
     youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o $radarr_movie_path/movie-trailer --restrict-filenames --merge-output-format mkv
   else
   if [[ $SANITY -eq 0 ]]
   then
-    echo "Video does not exist."
+    echo "Video does not exist." >&2
   else
-    echo "WTF. Something is very wrong."
+    echo "WTF. Something is very wrong." >&2
   fi
 fi
 
 # this is from earlier when we started checking for a trailer. let's hope nesting if statements doesn't fuck up somehow
     else
         TRAILERNAME=$(ls $radarr_movie_path/movie-trailer.*)
-        echo "Trailer exists: $TRAILERNAME"
+        echo "Trailer exists: $TRAILERNAME" >&2
 fi
-
-# as a final note the script doesn't bother to check for existing trailers. ¯\_(ツ)_/¯
-# as a final final note you probably shouldn't leave the "shruggie" in the previous line, it could break something
