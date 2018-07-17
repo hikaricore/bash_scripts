@@ -18,6 +18,8 @@ KEY2=$K2A$K2B$K2C
 if [ ! -f $radarr_movie_path/movie-trailer.* ]
     then
         echo "Trailer does not exist. Attempting to grab one." >&2
+        printf "Trailer does not exist. Attempting to grab one."
+        printf "Trailer does not exist. Attempting to grab 1." >&2
 
 # wait a bit to be safe (who knows if radarr is done or not)
 sleep 60
