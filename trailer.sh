@@ -41,7 +41,7 @@ TT=$radarr_movie_imdbid
 TMDB=$(curl -s "http://api.themoviedb.org/3/find/$TT?api_key=$KEY1&language=en-US&external_source=imdb_id" | tac | tac | jq -r '.' | grep "id\"" | sed 's/[^0-9]*//g')
 
 # pull trailer video id from tmdb based on tmdb id (imperfect, may not grab anything or may grab an video that is not trailer)
-# never assume just one video in the output. derp.
+# this should grab the first result from TMBD ,which is typically a trailer, but you might end up with a clip or teaser instead.
 YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1&language=en-US" | tac | tac | jq '.results[0]' | grep key | cut -d \" -f4)
 
 
@@ -52,6 +52,10 @@ YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1&
 # ERROR: Unable to download webpage: <urlopen error no host given> (caused by URLError('no host given',))"
 # no idea why this happens, or how to fix it.  XD
 # now with 100% more validity checking!  that will "probably" work and not break the process?
+
+# note, sanity check will not prevent errors of this nature:
+# "ERROR: This video contains content from Lionsgate, who has blocked it in your country on copyright grounds."
+# it can probably be fixed later, or studios can stop shooting themselves in the foot by blocking trailers via dmca.
 
 SANITY=$(curl -s "https://www.googleapis.com/youtube/v3/videos?part=id&id=$YOUTUBE&key=$KEY2" | tac | tac | jq -r '.' | grep totalResults | sed 's/[^0-9]*//g')
 
