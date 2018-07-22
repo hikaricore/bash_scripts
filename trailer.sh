@@ -11,8 +11,11 @@ K1B=77b8d9f8459cf95a
 K2A=AIzaSyCCD8e6A
 K2B=DQ4lOQcV77ErX
 K2C=yK3_d4unJwcYE
+K3A=3b16f01a59137eb1
+K3B=80c46b70e1bcee4d
 KEY1=$K1A$K1B
 KEY2=$K2A$K2B$K2C
+KEY3=$K3A$K3B
 
 # check to see if a trailer exists and do stuff if it doesn't (hey look this happens now!)
 if [ ! -f $radarr_movie_path/movie-trailer.* ]
@@ -27,6 +30,7 @@ RES=$(ffmpeg -i $radarr_moviefile_path 2>&1 | grep -oP 'Stream .*, \K[0-9]+x[0-9
 RES2=$(echo $RES | cut -d 'x' -f1)
 
 # confirm if video resolution requires an sd 480p or hd 720p trailer (we don't bother with 1080p, so there's no check or variable set for it here)
+
 if [ $RES2 -gt 1000 ]
   then
     RES3=720
@@ -41,9 +45,8 @@ TT=$radarr_movie_imdbid
 TMDB=$(curl -s "http://api.themoviedb.org/3/find/$TT?api_key=$KEY1&language=en-US&external_source=imdb_id" | tac | tac | jq -r '.' | grep "id\"" | sed 's/[^0-9]*//g')
 
 # pull trailer video id from tmdb based on tmdb id (imperfect, may not grab anything or may grab an video that is not trailer)
-# never assume just one video in the output. derp.
+# this should grab the first result from TMBD ,which is typically a trailer, but you might end up with a clip or teaser instead.
 YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1&language=en-US" | tac | tac | jq '.results[0]' | grep key | cut -d \" -f4)
-
 
 # download trailer from youtube based on video resolution (requires youtube-dl and permission to run it)
 # occasionally this step throws an error:
@@ -52,6 +55,19 @@ YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1&
 # ERROR: Unable to download webpage: <urlopen error no host given> (caused by URLError('no host given',))"
 # no idea why this happens, or how to fix it.  XD
 # now with 100% more validity checking!  that will "probably" work and not break the process?
+
+# note, sanity check will not prevent errors of this nature:
+# "ERROR: This video contains content from Lionsgate, who has blocked it in your country on copyright grounds."
+# it can probably be fixed later, or studios can stop shooting themselves in the foot by blocking trailers via dmca.
+
+# basic geolookup for when we receive errors (saving this for later)
+# curl -s http://api.ipstack.com/check?access_key=$KEY3 | tac | tac | jq '.' | grep country_code | cut -d \" -f4
+
+# find any regional restrions and isolate allowed region (saving this for later)
+# curl -s "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=$YOUTUBE&key=$KEY2" | tac | tac | jq '.' | jq 'index("items")' | jq '.contentDetals' | jq '.regionRestriction' | jq '.allowed' | cut -d \" -f2 | sed -n 2p
+# on second thought we should probably make a single api call to google and dump it into a variable, then parse it twice
+# no need to make extra api calls where it isn't needed. whatever, fuck it. this text will remind me to do that thing.
+# going to have to nest more if statements for any of this crap to work. fml.
 
 SANITY=$(curl -s "https://www.googleapis.com/youtube/v3/videos?part=id&id=$YOUTUBE&key=$KEY2" | tac | tac | jq -r '.' | grep totalResults | sed 's/[^0-9]*//g')
 
