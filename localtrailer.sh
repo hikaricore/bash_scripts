@@ -28,19 +28,13 @@ if [ $RES2 -gt 1000 ]
     RES3=480
 fi
 
-# set imdbid for film to static variable (because why the hell not)
-
+# set imdbid for film to static variable (needed here)
 if [ -f movie.nfo ]
     then
 	TT=$(cat movie.nfo | grep tt | cut -d \> -f2 | cut -c1-9)
     else
 	TT=$(cat *.nfo | grep -a "/tt" | tr -cd '\11\12\40-\176' | cut -d \/ -f5)
 fi
-
-# set imdbid for film to static variable (because why the hell not)
-#TT=$(cat movie.nfo | grep tt | cut -d \> -f2 | cut -c1-9)
-
-#cat *.nfo | grep -a "/tt" | tr -cd '\11\12\40-\176' | cut -d \/ -f5
 
 # pull tmdb id for film based on imdbid (yes this does indeed require two api calls. should no longer result in Judgement Night, unless it does)
 TMDB=$(curl -s "http://api.themoviedb.org/3/find/$TT?api_key=$KEY1&language=en-US&external_source=imdb_id" | tac | tac | jq -r '.' | grep "id\"" | sed 's/[^0-9]*//g')
@@ -49,6 +43,7 @@ TMDB=$(curl -s "http://api.themoviedb.org/3/find/$TT?api_key=$KEY1&language=en-U
 # never assume just one video in the output. derp.
 YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1&language=en-US" | tac | tac | jq '.results[0]' | grep key | cut -d \" -f4)
 
+# list imdb tmdb and youtube ids for reference
 printf "$TT -> $TMDB -> $YOUTUBE"'\n' >&2
 
 # download trailer from youtube based on video resolution (requires youtube-dl and permission to run it)
@@ -82,8 +77,3 @@ fi
         TRAILERNAME=$(ls movie-trailer.*)
         printf "Trailer already exists for "${PWD##*/}": $TRAILERNAME"'\n' >&2
 fi
-
-#YOUTUBE=$(echo $1 | cut -d \= -f2)
-
-#youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o movie-trailer --restrict-filenames --merge-output-format mkv
-#youtube-dl -f 'bestvideo[height<='$RES3'|ext!=webm]+bestaudio/best[height<='$RES3'|ext!=webm]' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o movie-trailer --restrict-filenames --merge-output-format mp4
