@@ -43,8 +43,18 @@ TMDB=$(curl -s "http://api.themoviedb.org/3/find/$TT?api_key=$KEY1&language=en-U
 # never assume just one video in the output. derp.
 YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1&language=en-US" | tac | tac | jq '.results[0]' | grep key | cut -d \" -f4)
 
+# color for id output (ok?)
+
+BLUE='\033[0;34m'
+GREEN='\033[0;32m'
+LIGHTGREEN='\033[1;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+LIGHTRED='\033[1;31m'
+NC='\033[0m' # No Color
+
 # list imdb tmdb and youtube ids for reference
-printf "$TT -> $TMDB -> $YOUTUBE"'\n' >&2
+printf "${YELLOW}$TT ${BLUE}-> ${LIGHTGREEN}$TMDB ${BLUE}-> ${LIGHTRED}$YOUTUBE${NC}"'\n' >&2
 
 # download trailer from youtube based on video resolution (requires youtube-dl and permission to run it)
 # occasionally this step throws an error:
