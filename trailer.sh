@@ -69,13 +69,21 @@ YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1&
 # no need to make extra api calls where it isn't needed. whatever, fuck it. this text will remind me to do that thing.
 # going to have to nest more if statements for any of this crap to work. fml.
 
+# trailer download currently defaults to /tmp/ to avoid youtube-dl and or python issues with non-standard characters
+# we're always going to assume the file that is output is called movie-trailer.mkv so things could still go wrong
+# now that i think of it, we should probably delete any existing movie-trailer.mkv from /tmp to avoid errors
+
 SANITY=$(curl -s "https://www.googleapis.com/youtube/v3/videos?part=id&id=$YOUTUBE&key=$KEY2" | tac | tac | jq -r '.' | grep totalResults | sed 's/[^0-9]*//g')
 
 if [[ $SANITY -eq 1 ]]
   then
     printf '\n'"YouTube trailer exists, attempting to download." >&2
-    youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o $radarr_movie_path/movie-trailer --restrict-filenames --merge-output-format mkv
-    sleep 5
+    rm /tmp/movie-trailer.*
+    sleep 2
+    youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o /tmp/movie-trailer --restrict-filenames --merge-output-format mkv
+    sleep 2
+    mv /tmp/movie-trailer.mkv $radarr_movie_path/movie-trailer.mkv
+    sleep 2
     TRAILERNAME=$(ls $radarr_movie_path/movie-trailer.*)
     printf '\n'"Trailer downloaded: $TRAILERNAME" >&2
   else
