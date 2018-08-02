@@ -78,7 +78,7 @@ SANITY=$(curl -s "https://www.googleapis.com/youtube/v3/videos?part=id&id=$YOUTU
 if [[ $SANITY -eq 1 ]]
   then
     printf '\n'"YouTube trailer exists, attempting to download." >&2
-    rm /tmp/movie-trailer.*
+    rm /tmp/movie-trailer.*  >/dev/null 2>&1
     sleep 2
     youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o /tmp/movie-trailer --restrict-filenames --merge-output-format mkv
     sleep 2
