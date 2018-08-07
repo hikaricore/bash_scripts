@@ -1,9 +1,12 @@
 #!/bin/bash
 export IFS=$'\n' &&
-for i in $(ls */*.mkv */*.avi */*.mp4 */*.webm */*.flv | grep -v movie-trailer); do
+for i in $(ls */*.mkv */*.mp4 */*.avi */*.mpg */*.mpeg */*.webm */*.flv | grep -v movie-trailer); do
 
-        crc="crc32 $i"
-        crc32 $i >> $(echo $i | sed s/\.[^.]*$//).crc
-        cat -v archivedfiles.csv | grep $(crc32 $i|LC_ALL=sv_SE tr '[:lower:]' '[:upper:]') >>
-
+        crc=$(crc32 $i)
+        write=$(echo $i | sed s/\.[^.]*$//).crc
+        echo $crc >> $write
+        # get the complete data sv from https://www.srrdb.com/open (requires login)
+        #cat -v archivedfiles.csv | grep $(echo $crc | LC_ALL=sv_SE tr '[:lower:]' '[:upper:]') >> $write
+        grep -f -i $crc archivedfiles.csv >> $write
+        
 done
