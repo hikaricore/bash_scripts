@@ -45,7 +45,7 @@ for i in $(ls */*.mkv */*.mp4 */*.avi */*.mpg */*.mpeg */*.webm */*.flv | grep -
                                         crc=$(head -n 1 $i.crc)
                                         #write=$(echo $i | sed s/\.[^.]*$//).crc
                                         write="$i".crc
-                                        echo $crc > $write
+                                        #echo $crc > $write
                                         # get the complete data sv from https://www.srrdb.com/open (requires login)
                                         #cat -v archivedfiles.csv | grep $(echo $crc | LC_ALL=sv_SE tr '[:lower:]' '[:upper:]') >> $write
                                         grep -f -i $crc archivedfiles.csv >> $write && echo "CRC Match!" >> $write
