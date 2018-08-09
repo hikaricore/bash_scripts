@@ -52,9 +52,10 @@ for i in $(ls */*.mkv */*.mp4 */*.avi */*.mpg */*.mpeg */*.webm */*.flv | grep -
                         
                                 # see if the file is already matched
                                 else
-                                if [[ $(wc -l "$i".crc) -eq 3 ]]
+                                if [[ $(wc -l "$i".crc) -eq 3 ]] && [[ $(cat "$1".crc | grep -q "CRC Match!"; echo $?) -eq 0 ]]
                           
                                         # we'll finish this mess later      
+                                        printf "CRC file exists for $i, and is a confirmed match with release." >&2
                           
                                 fi
                                 
