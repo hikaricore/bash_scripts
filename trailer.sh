@@ -8,9 +8,9 @@
 # api keys for themoviedb and youtube data api v3 (split for lazy obfuscation purposes)
 K1A=1df2a2659c50fdab
 K1B=77b8d9f8459cf95a
-K2A=AIzaSyCCD8e6A
-K2B=DQ4lOQcV77ErX
-K2C=yK3_d4unJwcYE
+K2A=AIzaSyB2EmnYV
+K2B=mIMpYSsJg8Bk-
+K2C=qFTWhcNf-puFY
 K3A=3b16f01a59137eb1
 K3B=80c46b70e1bcee4d
 KEY1=$K1A$K1B
@@ -73,7 +73,8 @@ YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1&
 # we're always going to assume the file that is output is called movie-trailer.mkv so things could still go wrong
 # now that i think of it, we should probably delete any existing movie-trailer.mkv from /tmp to avoid errors
 
-SANITY=$(curl -s "https://www.googleapis.com/youtube/v3/videos?part=id&id=$YOUTUBE&key=$KEY2" | tac | tac | jq -r '.' | grep totalResults | sed 's/[^0-9]*//g')
+#SANITY=$(curl -s "https://www.googleapis.com/youtube/v3/videos?part=id&id=$YOUTUBE&key=$KEY2" | tac | tac | jq -r '.' | grep totalResults | sed 's/[^0-9]*//g')
+SANITY=1
 
 if [[ $SANITY -eq 1 ]]
   then
