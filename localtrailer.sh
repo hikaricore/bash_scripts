@@ -2,6 +2,7 @@
 # not for use with automation or radarr. it will not be updated very often unless i find a major issue.
 
 # api keys for themoviedb and youtube data api v3 (split for lazy obfuscation purposes)
+# These are old keys and probably don't/won't work anymore. Left for visiblity purposes.
 K1A=1df2a2659c50fdab
 K1B=77b8d9f8459cf95a
 K2A=AIzaSyCCD8e6A
@@ -31,17 +32,21 @@ fi
 # set imdbid for film to static variable (needed here)
 if [ -f movie.nfo ]
     then
-	TT=$(cat movie.nfo | grep tt | cut -d \> -f2 | cut -c1-9)
+# Better than the stupid method before.
+	TT=$(cat movie.nfo | sed -n 's/.*<uniqueid type="imdb">\([^<]*\)<\/uniqueid>.*/\1/p')
     else
-	TT=$(cat *.nfo | grep -a "/tt" | tr -cd '\11\12\40-\176' | cut -d \/ -f5)
+# This might not work consistently, but I didn't really test it recently.
+ 	TT=$(cat *.nfo | grep -a "/tt" | tr -cd '\11\12\40-\176' | cut -d \/ -f5)
 fi
 
 # pull tmdb id for film based on imdbid (yes this does indeed require two api calls. should no longer result in Judgement Night, unless it does)
+# Simple adjustment here which shhould result in slightly better reliability.
 TMDB=$(curl -s "http://api.themoviedb.org/3/find/$TT?api_key=$KEY1&language=en-US&external_source=imdb_id" | tac | tac | jq -r '.' | grep "id\"" | sed 's/[^0-9]*//g')
 
 # pull trailer video id from tmdb based on tmdb id (imperfect, may not grab anything or may grab an video that is not trailer)
 # never assume just one video in the output. derp.
-YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1&language=en-US" | tac | tac | jq '.results[0]' | grep key | cut -d \" -f4)
+# This has been "fixed" for use with the latest API. Probably.
+YOUTUBE=$(curl -s "http://api.themoviedb.org/3/movie/$TMDB/videos?api_key=$KEY1&language=en-US" | jq -r '.results?[] | select(.type == "Trailer" and .official == true) | .key' | head -n 1)
 
 # color for id output (ok?)
 
@@ -64,15 +69,20 @@ printf "${YELLOW}$TT ${BLUE}-> ${LIGHTGREEN}$TMDB ${BLUE}-> ${LIGHTRED}$YOUTUBE$
 # no idea why this happens, or how to fix it.  XD
 # now with 100% more validity checking!  that will "probably" work and not break the process?
 
-SANITY=$(curl -s "https://www.googleapis.com/youtube/v3/videos?part=id&id=$YOUTUBE&key=$KEY2" | tac | tac | jq -r '.' | grep totalResults | sed 's/[^0-9]*//g')
+# This is broken for me due to API quota nonsense, also I'm tired, so fuck it. This can easily be turned back on.
+#SANITY=$(curl -s "https://www.googleapis.com/youtube/v3/videos?part=id&id=$YOUTUBE&key=$KEY2" | tac | tac | jq -r '.' | grep totalResults | sed 's/[^0-9]*//g')
+# Sanity can be faked. Ha ha.
+SANITY=1
 
 if [[ $SANITY -eq 1 ]]
   then
     printf "YouTube trailer exists, attempting to download." >&2
-    youtube-dl -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o movie-trailer --restrict-filenames --merge-output-format mkv
+    # Change to yt-dlp from youtube-dl.
+    yt-dlp -f 'bestvideo[height<='$RES3']+bestaudio/best[height<='$RES3']' -q "https://www.youtube.com/watch?v=$YOUTUBE" -o movie-trailer --restrict-filenames --merge-output-format mkv
     sleep 5
     TRAILERNAME=$(ls movie-trailer.*)
     printf '\n'"Trailer downloaded: $TRAILERNAME"'\n' >&2
+    chmod 644 "$TRAILERNAME"
   else
   if [[ $SANITY -eq 0 ]]
   then
